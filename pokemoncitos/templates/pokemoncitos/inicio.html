@@ -1,0 +1,347 @@
+
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pokémon World</title>
+
+    <link rel="stylesheet" href="{% static 'pokemoncitos/estilos.css' %}">
+</head>
+
+<body>
+
+    <!-- ENCABEZADO -->
+    <header>
+        <h1>⚡ Pokémon World ⚡</h1>
+        <p>¡Explora, descubre y conoce el maravilloso mundo Pokémon!</p>
+    </header>
+
+    <!-- MENÚ DE NAVEGACIÓN -->
+    <nav>
+        <a href="#inicio">Inicio</a>
+        <a href="#pokemones">Pokémon</a>
+        <a href="#gimnasios">Gimnasios</a>
+        <a href="#entrenadores">Entrenadores</a>
+
+        <a href="{% url 'crear_pokemon' %}" class="boton-agregar">
+        ➕ Agregar Pokémon
+
+        
+        <a href="{% url 'crear_entrenador' %}" class="boton-agregar">
+        ➕ Agregar entrenador
+</a>
+
+    </a>
+    </nav>
+
+    <main>
+
+        <!-- INICIO -->
+        <section id="inicio" class="bienvenida">
+            <h2>¡Bienvenido al mundo Pokémon!</h2>
+
+            <p>
+                Descubre diferentes Pokémon, conoce sus habilidades,
+                explora los gimnasios y encuentra a los entrenadores
+                que forman parte de esta aventura.
+            </p>
+        </section>
+
+        <!-- GALERÍA DE POKÉMON -->
+        <section id="pokemones">
+            <h2>⚡ Galería Pokémon</h2>
+
+            <!-- BUSCADOR Y FILTRO -->
+            <div class="filtros-pokemon">
+
+                <input
+                    type="text"
+                    id="buscarPokemon"
+                    placeholder="🔎 Buscar Pokémon por nombre..."
+                >
+
+                <select id="filtrarElemento">
+                    <option value="">Todos los elementos</option>
+                    <option value="fuego">Fuego</option>
+                    <option value="agua">Agua</option>
+                    <option value="planta">Planta</option>
+                    <option value="eléctrico">Eléctrico</option>
+                    <option value="electrico">Electrico</option>
+                    <option value="psíquico">Psíquico</option>
+                    <option value="psiquico">Psiquico</option>
+                    <option value="normal">Normal</option>
+                    <option value="hielo">Hielo</option>
+                    <option value="lucha">Lucha</option>
+                    <option value="veneno">Veneno</option>
+                    <option value="tierra">Tierra</option>
+                    <option value="volador">Volador</option>
+                    <option value="bicho">Bicho</option>
+                    <option value="roca">Roca</option>
+                    <option value="fantasma">Fantasma</option>
+                    <option value="dragón">Dragón</option>
+                    <option value="dragon">Dragon</option>
+                    <option value="acero">Acero</option>
+                    <option value="siniestro">Siniestro</option>
+                    <option value="hada">Hada</option>
+                </select>
+
+            </div>
+
+            <!-- CARTAS DE POKÉMON -->
+            <div class="galeria-pokemon">
+
+                {% for pokemon in pokemones %}
+
+                    <article
+                        class="carta-pokemon"
+                        data-nombre="{{ pokemon.nombre|lower }}"
+                        data-elemento="{{ pokemon.elemento|lower }}"
+                        style="--color-carta: {{ pokemon.color_carta }};"
+                    >
+
+                        <div class="carta-encabezado">
+                            <h3>{{ pokemon.nombre }}</h3>
+
+                            <span class="tipo-pokemon">
+                                {{ pokemon.elemento }}
+                            </span>
+                        </div>
+
+                        {% if pokemon.imagen %}
+                            <div class="imagen-pokemon">
+                                <img
+                                    src="{{ pokemon.imagen }}"
+                                    alt="{{ pokemon.nombre }}"
+                                >
+                            </div>
+                        {% else %}
+                            <div class="sin-imagen">
+                                <span>⚡</span>
+                                <p>Imagen no disponible</p>
+                            </div>
+                        {% endif %}
+
+                        <div class="informacion-pokemon">
+
+                            <p>
+                                <strong>Peso:</strong>
+                                {{ pokemon.peso }} kg
+                            </p>
+
+                            <p>
+                                <strong>Naturaleza:</strong>
+                                {{ pokemon.naturaleza }}
+                            </p>
+
+                            <p>
+                                <strong>Habilidades:</strong>
+                                {{ pokemon.habilidades }}
+                            </p>
+
+                            <p>
+                                <strong>Descripción:</strong>
+                                {{ pokemon.descripcion }}
+                            </p>
+
+                            <p>
+                                <strong>Entrenador:</strong>
+                                {{ pokemon.entrenador|default:"Sin entrenador" }}
+                            </p>
+
+                            <p class="accesorio">
+                                🎀 Accesorio: {{ pokemon.accesorio }}
+                            </p>
+
+                        </div>
+                        
+<div class="acciones-pokemon">
+
+    <a href="{% url 'editar_pokemon' pokemon.id %}"
+       class="boton-editar">
+        ✏️ Editar
+    </a>
+
+    <a href="{% url 'eliminar_pokemon' pokemon.id %}"
+       class="boton-eliminar">
+        🗑️ Eliminar
+    </a>
+
+</div>
+
+
+                    </article>
+
+                {% empty %}
+
+                    <p>Aún no hay Pokémon registrados.</p>
+
+                {% endfor %}
+
+                <!-- MENSAJE SI NO HAY RESULTADOS -->
+                <p id="sinResultados" style="display: none;">
+                    No se encontraron Pokémon con esos criterios.
+                </p>
+
+            </div>
+        </section>
+
+        <!-- GIMNASIOS -->
+        <section id="gimnasios">
+            <h2>🏆 Gimnasios Pokémon</h2>
+
+            <div class="galeria-gimnasios">
+
+                {% for gimnasio in gimnasios %}
+
+                    <article class="carta-gimnasio">
+
+                        <h3>{{ gimnasio.nombre }}</h3>
+
+                        <p>
+                            <strong>Elemento:</strong>
+                            {{ gimnasio.elemento }}
+                        </p>
+
+                        <p>
+                            <strong>Insignia:</strong>
+                            {{ gimnasio.insignia }}
+                        </p>
+
+                        <p>
+                            <strong>Líder del gimnasio:</strong>
+                            {{ gimnasio.lider }}
+                        </p>
+                        <div class="acciones-pokemon">
+
+    <a href="{% url 'editar_gimnasio' gimnasio.id %}"
+       class="boton-editar">
+        ✏️ Editar
+    </a>
+
+    <a href="{% url 'eliminar_gimnasio' gimnasio.id %}"
+       class="boton-eliminar">
+        🗑️ Eliminar
+    </a>
+
+</div>
+
+                    </article>
+
+                {% empty %}
+
+                    <p>Aún no hay gimnasios registrados.</p>
+
+                {% endfor %}
+
+            </div>
+        </section>
+
+        <!-- ENTRENADORES -->
+        <section id="entrenadores">
+            <h2>🧢 Entrenadores Pokémon</h2>
+
+            <div class="galeria-entrenadores">
+
+                {% for entrenador in entrenadores %}
+
+                    <article class="carta-entrenador">
+
+                        <h3>
+                            {{ entrenador.nombre }}
+                            {{ entrenador.apellido }}
+                        </h3>
+
+                        <p>
+                            <strong>Documento:</strong>
+                            {{ entrenador.documento }}
+                        </p>
+
+                        <p>
+                            <strong>Medallas:</strong>
+                            {{ entrenador.medallas }}
+                        </p>
+                        
+<div class="acciones-pokemon">
+
+    <a href="{% url 'editar_entrenador' entrenador.id %}"
+       class="boton-editar">
+        ✏️ Editar
+    </a>
+
+    <a href="{% url 'eliminar_entrenador' entrenador.id %}"
+       class="boton-eliminar">
+        🗑️ Eliminar
+    </a>
+
+</div>
+
+
+                    </article>
+
+                {% empty %}
+
+                    <p>Aún no hay entrenadores registrados.</p>
+
+                {% endfor %}
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer>
+        <p>⚡ Pokémon World | Un mundo lleno de aventuras ⚡</p>
+        <p>Proyecto educativo desarrollado con Django</p>
+    </footer>
+
+    <!-- FUNCIONAMIENTO DEL BUSCADOR -->
+    <script>
+        const buscador = document.getElementById("buscarPokemon");
+        const filtro = document.getElementById("filtrarElemento");
+        const cartas = document.querySelectorAll(".carta-pokemon");
+        const mensaje = document.getElementById("sinResultados");
+
+        function filtrarPokemon() {
+            const nombreBuscado = buscador.value
+                .toLowerCase()
+                .trim();
+
+            const elementoBuscado = filtro.value
+                .toLowerCase();
+
+            let encontrados = 0;
+
+            cartas.forEach(function(carta) {
+                const nombre = carta.dataset.nombre;
+                const elemento = carta.dataset.elemento;
+
+                const coincideNombre =
+                    nombre.includes(nombreBuscado);
+
+                const coincideElemento =
+                    elementoBuscado === "" ||
+                    elemento === elementoBuscado;
+
+                if (coincideNombre && coincideElemento) {
+                    carta.style.display = "";
+                    encontrados++;
+                } else {
+                    carta.style.display = "none";
+                }
+            });
+
+            mensaje.style.display =
+                encontrados === 0 ? "block" : "none";
+        }
+
+        buscador.addEventListener("input", filtrarPokemon);
+        filtro.addEventListener("change", filtrarPokemon);
+    </script>
+
+</body>
+</html>

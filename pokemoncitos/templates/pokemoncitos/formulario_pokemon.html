@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Formulario Pokémon | Pokémon World</title>
+
+    <link rel="stylesheet" href="{% static 'pokemoncitos/estilos.css' %}">
+</head>
+
+<body>
+
+    <header>
+        <h1>⚡ Pokémon World ⚡</h1>
+        <p>¡Dale vida a tu próxima aventura!</p>
+    </header>
+
+    <main>
+
+        <section class="formulario-seccion">
+
+            <h2>🎴 Registrar o editar Pokémon</h2>
+
+            <form method="POST" class="formulario-pokemon">
+                {% csrf_token %}
+
+                {{ formulario.as_p }}
+
+                <button type="submit" class="boton-guardar">
+                    Guardar Pokémon
+                </button>
+            </form>
+
+            <p>
+                <a href="{% url 'inicio' %}" class="enlace-volver">
+                    ← Volver a Pokémon World
+                </a>
+            </p>
+
+        </section>
+
+    </main>
+
+    <footer>
+        <p>⚡ Pokémon World | Un mundo lleno de aventuras ⚡</p>
+    </footer>
+
+</body>
+</html>

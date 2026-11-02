@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eliminar gimnasio | Pokémon World</title>
+    <link rel="stylesheet" href="{% static 'pokemoncitos/estilos.css' %}">
+</head>
+
+<body>
+
+    <header>
+        <h1>⚡ Pokémon World ⚡</h1>
+        <p>Administración de gimnasios</p>
+    </header>
+
+    <main>
+        <section class="formulario-seccion">
+
+            <h2>🗑️ Confirmar eliminación</h2>
+
+            <p>
+                ¿Estás segura de que quieres eliminar el gimnasio
+                <strong>{{ gimnasio.nombre }}</strong>?
+            </p>
+
+            <p>Esta acción no se puede deshacer.</p>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <button type="submit" class="boton-eliminar">
+                    Sí, eliminar gimnasio
+                </button>
+
+                <a href="{% url 'inicio' %}" class="enlace-volver">
+                    Cancelar y volver
+                </a>
+            </form>
+
+        </section>
+    </main>
+
+    <footer>
+        <p>⚡ Pokémon World | Un mundo lleno de aventuras ⚡</p>
+    </footer>
+
+</body>
+</html>
