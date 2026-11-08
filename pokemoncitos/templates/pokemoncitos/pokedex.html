@@ -1,0 +1,236 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex | Pokémon World</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #202b50, #394f82);
+            color: white;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #e63946;
+            padding: 25px 15px;
+            text-align: center;
+            border-bottom: 5px solid #b71c2c;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 35px;
+        }
+
+        header p {
+            margin-bottom: 0;
+        }
+
+        .contenedor {
+            width: 90%;
+            max-width: 900px;
+            margin: 30px auto;
+        }
+
+        .volver {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .buscador {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .buscador input {
+            flex: 1;
+            min-width: 0;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 13px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #ffcb05;
+            color: #202b50;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .tarjeta {
+            background: white;
+            color: #202b50;
+            border-radius: 18px;
+            padding: 25px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            box-shadow: 0 8px 20px #0004;
+        }
+
+        .imagen {
+            text-align: center;
+        }
+
+        .imagen img {
+            width: 100%;
+            max-width: 280px;
+            object-fit: contain;
+        }
+
+        .tipo {
+            display: inline-block;
+            background: #e8edf7;
+            padding: 6px 12px;
+            margin: 4px;
+            border-radius: 20px;
+            text-transform: capitalize;
+        }
+
+        .estadistica {
+            margin: 12px 0;
+        }
+
+        .barra {
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .relleno {
+            height: 100%;
+            background: #e63946;
+            border-radius: 10px;
+        }
+
+        .error {
+            background: #ffe3e3;
+            color: #a00000;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .ayuda {
+            text-align: center;
+            color: #e5e7eb;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 650px) {
+            .tarjeta {
+                grid-template-columns: 1fr;
+            }
+
+            .buscador {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Pokédex</h1>
+    <p>Descubre el mundo Pokémon con Pokémon World</p>
+</header>
+
+<main class="contenedor">
+
+    <a class="volver" href="{% url 'inicio' %}">← Volver a Pokémon World</a>
+
+    <form class="buscador" method="get">
+        <input
+            type="text"
+            name="nombre"
+            placeholder="Escribe un Pokémon, por ejemplo Pikachu"
+            value="{{ nombre }}"
+            required
+        >
+        <button type="submit">Buscar Pokémon</button>
+    </form>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    {% if pokemon_api %}
+        <section class="tarjeta">
+
+            <div class="imagen">
+                {% if pokemon_api.imagen %}
+                    <img src="{{ pokemon_api.imagen }}" alt="{{ pokemon_api.nombre }}">
+                {% else %}
+                    <p>Imagen no disponible.</p>
+                {% endif %}
+
+                <h2>{{ pokemon_api.nombre }}</h2>
+
+                {% for tipo in pokemon_api.tipos %}
+                    <span class="tipo">{{ tipo }}</span>
+                {% endfor %}
+            </div>
+
+            <div>
+                <h2>Información</h2>
+
+                <p><strong>Altura:</strong> {{ pokemon_api.altura }} m</p>
+                <p><strong>Peso:</strong> {{ pokemon_api.peso }} kg</p>
+                <p><strong>Experiencia base:</strong> {{ pokemon_api.experiencia|default:"No disponible" }}</p>
+
+                <h3>Habilidades</h3>
+                <ul>
+                    {% for habilidad in pokemon_api.habilidades %}
+                        <li>{{ habilidad }}</li>
+                    {% empty %}
+                        <li>No hay habilidades disponibles.</li>
+                    {% endfor %}
+                </ul>
+
+                <h3>Estadísticas</h3>
+
+                {% for estadistica in pokemon_api.estadisticas %}
+                    <div class="estadistica">
+                        <strong>{{ estadistica.nombre }}: {{ estadistica.valor }}</strong>
+                        <div class="barra">
+                            <div class="relleno"
+                                 style="width: {% if estadistica.valor > 100 %}100{% else %}{{ estadistica.valor }}{% endif %}%;">
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+        </section>
+    {% else %}
+        {% if not error %}
+            <p class="ayuda">
+                Escribe el nombre de un Pokémon para consultar sus datos.
+                Prueba con Pikachu, Charizard o Bulbasaur.
+            </p>
+        {% endif %}
+    {% endif %}
+
+</main>
+
+</body>
+</html>

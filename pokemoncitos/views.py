@@ -4,10 +4,77 @@ from .models import Pokemon, Gimnasio, Entrenador
 from .forms import PokemonForm,GimnasioForm,EntrenadorForm
 
 
+
+
 def inicio(request):
+    import requests
+
     pokemones = Pokemon.objects.all()
     gimnasios = Gimnasio.objects.all()
     entrenadores = Entrenador.objects.all()
+
+    # Traducción de los tipos al español
+    traducciones_tipos = {
+        "fire": "Fuego",
+        "water": "Agua",
+        "grass": "Planta",
+        "electric": "Eléctrico",
+        "psychic": "Psíquico",
+        "normal": "Normal",
+        "ice": "Hielo",
+        "fighting": "Lucha",
+        "poison": "Veneno",
+        "ground": "Tierra",
+        "flying": "Volador",
+        "bug": "Bicho",
+        "rock": "Roca",
+        "ghost": "Fantasma",
+        "dragon": "Dragón",
+        "steel": "Acero",
+        "dark": "Siniestro",
+        "fairy": "Hada"
+    }
+
+    for pokemon in pokemones:
+        pokemon.estadisticas_api = {}
+        pokemon.imagen_api = None
+        pokemon.tipos_api = []
+
+        try:
+            nombre_api = pokemon.nombre.strip().lower()
+
+            respuesta = requests.get(
+                f"https://pokeapi.co/api/v2/pokemon/{nombre_api}",
+                timeout=5
+            )
+
+            if respuesta.status_code == 200:
+                datos = respuesta.json()
+
+                # Imagen oficial del Pokémon
+                pokemon.imagen_api = (
+                    datos["sprites"]["other"]["official-artwork"]["front_default"]
+                    or datos["sprites"]["front_default"]
+                )
+
+                # Tipos traducidos al español
+                pokemon.tipos_api = [
+                    traducciones_tipos.get(
+                        tipo["type"]["name"],
+                        tipo["type"]["name"].capitalize()
+                    )
+                    for tipo in datos["types"]
+                ]
+
+                # Estadísticas de combate
+                for estadistica in datos["stats"]:
+                    nombre = estadistica["stat"]["name"]
+                    valor = estadistica["base_stat"]
+
+                    pokemon.estadisticas_api[nombre] = valor
+
+        except requests.RequestException:
+            pass
 
     contexto = {
         "pokemones": pokemones,
@@ -15,7 +82,13 @@ def inicio(request):
         "entrenadores": entrenadores,
     }
 
-    return render(request, "pokemoncitos/inicio.html", contexto)
+    return render(
+        request,
+        "pokemoncitos/inicio.html",
+        contexto
+    )
+
+
 
 
 # REGISTRAR UN POKEMON
@@ -180,6 +253,65 @@ def eliminar_entrenador(request, id):
         request,
         "pokemoncitos/confirmar_eliminar_entrenador.html",
         {"entrenador": entrenador}
+    )
+
+
+
+# POKEDEX CON POKEAPI
+import requests
+
+
+def pokedex(request):
+    nombre = request.GET.get("nombre", "").strip().lower()
+    pokemon_api = None
+    error = None
+
+    if nombre:
+        try:
+            respuesta = requests.get(
+                f"https://pokeapi.co/api/v2/pokemon/{nombre}",
+                timeout=10
+            )
+
+            if respuesta.status_code == 200:
+                datos = respuesta.json()
+
+                pokemon_api = {
+                    "nombre": datos["name"].capitalize(),
+                    "imagen": datos["sprites"]["other"]["official-artwork"]["front_default"],
+                    "altura": datos["height"] / 10,
+                    "peso": datos["weight"] / 10,
+                    "tipos": [
+                        tipo["type"]["name"]
+                        for tipo in datos["types"]
+                    ],
+                    "habilidades": [
+                        habilidad["ability"]["name"]
+                        for habilidad in datos["abilities"]
+                    ],
+                    "experiencia": datos["base_experience"],
+                    "estadisticas": [
+                        {
+                            "nombre": estadistica["stat"]["name"],
+                            "valor": estadistica["base_stat"]
+                        }
+                        for estadistica in datos["stats"]
+                    ]
+                }
+            else:
+                error = "No encontramos ese Pokémon. Revisa el nombre."
+
+        except requests.RequestException:
+            error = "No pudimos conectar con PokéAPI. Inténtalo de nuevo."
+
+    return render(
+        request,
+        "pokemoncitos/pokedex.html",
+        {
+            "pokemon_api": pokemon_api,
+            "error": error,
+            "nombre": nombre
+        }
     )
 
 

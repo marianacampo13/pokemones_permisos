@@ -26,16 +26,16 @@
         <a href="#pokemones">Pokémon</a>
         <a href="#gimnasios">Gimnasios</a>
         <a href="#entrenadores">Entrenadores</a>
+        <a href="{% url 'pokedex' %}">Pokédex</a>
 
-        <a href="{% url 'crear_pokemon' %}" class="boton-agregar">
+        <a href="{% url 'crear_pokemon' %}" class="boton-agregar">  </a>
         ➕ Agregar Pokémon
 
         
-        <a href="{% url 'crear_entrenador' %}" class="boton-agregar">
+        <a href="{% url 'crear_entrenador' %}" class="boton-agregar">    </a>
         ➕ Agregar entrenador
-</a>
 
-    </a>
+       
     </nav>
 
     <main>
@@ -111,14 +111,16 @@
                             </span>
                         </div>
 
-                        {% if pokemon.imagen %}
-                            <div class="imagen-pokemon">
-                                <img
-                                    src="{{ pokemon.imagen }}"
-                                    alt="{{ pokemon.nombre }}"
-                                >
-                            </div>
-                        {% else %}
+                       
+{% if pokemon.imagen_api or pokemon.imagen %}
+    <div class="imagen-pokemon">
+        <img
+            src="{{ pokemon.imagen_api|default:pokemon.imagen }}"
+            alt="{{ pokemon.nombre }}"
+        >
+    </div>
+{% else %}
+
                             <div class="sin-imagen">
                                 <span>⚡</span>
                                 <p>Imagen no disponible</p>
@@ -155,10 +157,50 @@
                             <p class="accesorio">
                                 🎀 Accesorio: {{ pokemon.accesorio }}
                             </p>
+                            
+<div class="estadisticas-pokemon">
+
+    <h4>📊 Estadísticas de combate</h4>
+
+    <p>❤️ Vida: {{ pokemon.estadisticas_api.hp|default:"0" }}</p>
+    <div class="barra-estadistica vida">
+        <div class="relleno-estadistica"
+             style="width: {% if pokemon.estadisticas_api.hp > 100 %}100{% else %}{{ pokemon.estadisticas_api.hp|default:0 }}{% endif %}%;">
+        </div>
+    </div>
+
+    <p>⚔️ Ataque: {{ pokemon.estadisticas_api.attack|default:"0" }}</p>
+    <div class="barra-estadistica ataque">
+        <div class="relleno-estadistica"
+             style="width: {% if pokemon.estadisticas_api.attack > 100 %}100{% else %}{{ pokemon.estadisticas_api.attack|default:0 }}{% endif %}%;">
+        </div>
+    </div>
+
+    <p>🛡️ Defensa: {{ pokemon.estadisticas_api.defense|default:"0" }}</p>
+    <div class="barra-estadistica defensa">
+        <div class="relleno-estadistica"
+             style="width: {% if pokemon.estadisticas_api.defense > 100 %}100{% else %}{{ pokemon.estadisticas_api.defense|default:0 }}{% endif %}%;">
+        </div>
+    </div>
+
+    <p>⚡ Velocidad: {{ pokemon.estadisticas_api.speed|default:"0" }}</p>
+    <div class="barra-estadistica velocidad">
+        <div class="relleno-estadistica"
+             style="width: {% if pokemon.estadisticas_api.speed > 100 %}100{% else %}{{ pokemon.estadisticas_api.speed|default:0 }}{% endif %}%;">
+        </div>
+    </div>
+
+</div>
 
                         </div>
                         
+
 <div class="acciones-pokemon">
+
+    <a href="{% url 'pokedex' %}?nombre={{ pokemon.nombre|urlencode }}"
+       class="boton-pokedex">
+        🔎 Ver en la Pokédex
+    </a>
 
     <a href="{% url 'editar_pokemon' pokemon.id %}"
        class="boton-editar">

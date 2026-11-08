@@ -409,5 +409,120 @@ article img {
 }
 
 
+/* BOTÓN PARA CONSULTAR LA POKÉDEX */
+.boton-pokedex {
+    display: inline-block;
+    background: linear-gradient(135deg, #ffcb05, #f5a623);
+    color: #202b50;
+    padding: 10px 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.boton-pokedex:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.25);
+}
+
+
+/* ESTADÍSTICAS DE COMBATE */
+.estadisticas-pokemon {
+    margin-top: 18px;
+    padding: 14px;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 12px;
+}
+
+.estadisticas-pokemon h4 {
+    margin-top: 0;
+    margin-bottom: 14px;
+    color: #202b50;
+}
+
+.estadistica-pokemon {
+    margin-bottom: 12px;
+}
+
+.estadistica-texto {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 5px;
+    color: #202b50;
+    font-size: 13px;
+}
+
+.barra-estadistica {
+    height: 9px;
+    background: #dfe3eb;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.relleno-estadistica {
+    height: 100%;
+    background: linear-gradient(90deg, #ffcb05, #e63946);
+    border-radius: 10px;
+    transition: width 0.4s ease;
+}
+
+
+
+/* ESTADÍSTICAS DE COMBATE */
+.estadisticas-pokemon {
+    margin-top: 18px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 12px;
+}
+
+.estadisticas-pokemon h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #202b50;
+}
+
+.estadisticas-pokemon p {
+    margin: 12px 0 5px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.barra-estadistica {
+    width: 100%;
+    height: 12px;
+    background: #dedede;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.relleno-estadistica {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+.vida .relleno-estadistica {
+    background: #e85d75;
+}
+
+.ataque .relleno-estadistica {
+    background: #f59e0b;
+}
+
+.defensa .relleno-estadistica {
+    background: #3b82f6;
+}
+
+.velocidad .relleno-estadistica {
+    background: #8b5cf6;
+}
+
+
+
+
 
 

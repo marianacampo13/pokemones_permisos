@@ -21,6 +21,9 @@ urlpatterns = [
     path("entrenador/editar/<int:id>/", views.editar_entrenador, name="editar_entrenador"),
     path("entrenador/eliminar/<int:id>/", views.eliminar_entrenador, name="eliminar_entrenador"),
 
+    # Pokedex
+    path("pokedex/", views.pokedex, name="pokedex"),
+
 
 ]
 
