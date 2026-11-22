@@ -28,14 +28,30 @@
         <a href="#entrenadores">Entrenadores</a>
         <a href="{% url 'pokedex' %}">Pokédex</a>
 
-        <a href="{% url 'crear_pokemon' %}" class="boton-agregar">  </a>
-        ➕ Agregar Pokémon
+        {% if user.is_superuser or user.perfil.rol == "ADMIN" or user.perfil.rol == "EDITOR" %}
+            <a href="{% url 'crear_pokemon' %}" class="boton-agregar">
+                ➕ Agregar Pokémon
+            </a>
 
-        
-        <a href="{% url 'crear_entrenador' %}" class="boton-agregar">    </a>
-        ➕ Agregar entrenador
+            <a href="{% url 'crear_gimnasio' %}" class="boton-agregar">
+                ➕ Agregar gimnasio
+            </a>
 
-       
+            <a href="{% url 'crear_entrenador' %}" class="boton-agregar">
+                ➕ Agregar entrenador
+            </a>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+            <span>Hola, {{ user.username }}</span>
+
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">Cerrar sesión</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}">Iniciar sesión</a>
+        {% endif %}
     </nav>
 
     <main>
@@ -111,16 +127,14 @@
                             </span>
                         </div>
 
-                       
-{% if pokemon.imagen_api or pokemon.imagen %}
-    <div class="imagen-pokemon">
-        <img
-            src="{{ pokemon.imagen_api|default:pokemon.imagen }}"
-            alt="{{ pokemon.nombre }}"
-        >
-    </div>
-{% else %}
-
+                        {% if pokemon.imagen_api or pokemon.imagen %}
+                            <div class="imagen-pokemon">
+                                <img
+                                    src="{{ pokemon.imagen_api|default:pokemon.imagen }}"
+                                    alt="{{ pokemon.nombre }}"
+                                >
+                            </div>
+                        {% else %}
                             <div class="sin-imagen">
                                 <span>⚡</span>
                                 <p>Imagen no disponible</p>
@@ -157,70 +171,81 @@
                             <p class="accesorio">
                                 🎀 Accesorio: {{ pokemon.accesorio }}
                             </p>
-                            
-<div class="estadisticas-pokemon">
 
-    <h4>📊 Estadísticas de combate</h4>
+                            <div class="estadisticas-pokemon">
 
-    <p>❤️ Vida: {{ pokemon.estadisticas_api.hp|default:"0" }}</p>
-    <div class="barra-estadistica vida">
-        <div class="relleno-estadistica"
-             style="width: {% if pokemon.estadisticas_api.hp > 100 %}100{% else %}{{ pokemon.estadisticas_api.hp|default:0 }}{% endif %}%;">
-        </div>
-    </div>
+                                <h4>📊 Estadísticas de combate</h4>
 
-    <p>⚔️ Ataque: {{ pokemon.estadisticas_api.attack|default:"0" }}</p>
-    <div class="barra-estadistica ataque">
-        <div class="relleno-estadistica"
-             style="width: {% if pokemon.estadisticas_api.attack > 100 %}100{% else %}{{ pokemon.estadisticas_api.attack|default:0 }}{% endif %}%;">
-        </div>
-    </div>
+                                <p>❤️ Vida: {{ pokemon.estadisticas_api.hp|default:"0" }}</p>
+                                <div class="barra-estadistica vida">
+                                    <div
+                                        class="relleno-estadistica"
+                                        style="width: {% if pokemon.estadisticas_api.hp > 100 %}100{% else %}{{ pokemon.estadisticas_api.hp|default:0 }}{% endif %}%;">
+                                    </div>
+                                </div>
 
-    <p>🛡️ Defensa: {{ pokemon.estadisticas_api.defense|default:"0" }}</p>
-    <div class="barra-estadistica defensa">
-        <div class="relleno-estadistica"
-             style="width: {% if pokemon.estadisticas_api.defense > 100 %}100{% else %}{{ pokemon.estadisticas_api.defense|default:0 }}{% endif %}%;">
-        </div>
-    </div>
+                                <p>⚔️ Ataque: {{ pokemon.estadisticas_api.attack|default:"0" }}</p>
+                                <div class="barra-estadistica ataque">
+                                    <div
+                                        class="relleno-estadistica"
+                                        style="width: {% if pokemon.estadisticas_api.attack > 100 %}100{% else %}{{ pokemon.estadisticas_api.attack|default:0 }}{% endif %}%;">
+                                    </div>
+                                </div>
 
-    <p>⚡ Velocidad: {{ pokemon.estadisticas_api.speed|default:"0" }}</p>
-    <div class="barra-estadistica velocidad">
-        <div class="relleno-estadistica"
-             style="width: {% if pokemon.estadisticas_api.speed > 100 %}100{% else %}{{ pokemon.estadisticas_api.speed|default:0 }}{% endif %}%;">
-        </div>
-    </div>
+                                <p>🛡️ Defensa: {{ pokemon.estadisticas_api.defense|default:"0" }}</p>
+                                <div class="barra-estadistica defensa">
+                                    <div
+                                        class="relleno-estadistica"
+                                        style="width: {% if pokemon.estadisticas_api.defense > 100 %}100{% else %}{{ pokemon.estadisticas_api.defense|default:0 }}{% endif %}%;">
+                                    </div>
+                                </div>
 
-</div>
+                                <p>⚡ Velocidad: {{ pokemon.estadisticas_api.speed|default:"0" }}</p>
+                                <div class="barra-estadistica velocidad">
+                                    <div
+                                        class="relleno-estadistica"
+                                        style="width: {% if pokemon.estadisticas_api.speed > 100 %}100{% else %}{{ pokemon.estadisticas_api.speed|default:0 }}{% endif %}%;">
+                                    </div>
+                                </div>
+
+                            </div>
 
                         </div>
-                        
 
-<div class="acciones-pokemon">
+                        <!-- ACCIONES DEL POKÉMON -->
+                        <div class="acciones-pokemon">
 
-    <a href="{% url 'pokedex' %}?nombre={{ pokemon.nombre|urlencode }}"
-       class="boton-pokedex">
-        🔎 Ver en la Pokédex
-    </a>
+                            <a
+                                href="{% url 'pokedex' %}?nombre={{ pokemon.nombre|urlencode }}"
+                                class="boton-pokedex"
+                            >
+                                🔎 Ver en la Pokédex
+                            </a>
 
-    <a href="{% url 'editar_pokemon' pokemon.id %}"
-       class="boton-editar">
-        ✏️ Editar
-    </a>
+                            {% if user.is_superuser or user.perfil.rol == "ADMIN" or user.perfil.rol == "EDITOR" %}
+                                <a
+                                    href="{% url 'editar_pokemon' pokemon.id %}"
+                                    class="boton-editar"
+                                >
+                                    ✏️ Editar
+                                </a>
+                            {% endif %}
 
-    <a href="{% url 'eliminar_pokemon' pokemon.id %}"
-       class="boton-eliminar">
-        🗑️ Eliminar
-    </a>
+                            {% if user.is_superuser or user.perfil.rol == "ADMIN" %}
+                                <a
+                                    href="{% url 'eliminar_pokemon' pokemon.id %}"
+                                    class="boton-eliminar"
+                                >
+                                    🗑️ Eliminar
+                                </a>
+                            {% endif %}
 
-</div>
-
+                        </div>
 
                     </article>
 
                 {% empty %}
-
                     <p>Aún no hay Pokémon registrados.</p>
-
                 {% endfor %}
 
                 <!-- MENSAJE SI NO HAY RESULTADOS -->
@@ -257,26 +282,33 @@
                             <strong>Líder del gimnasio:</strong>
                             {{ gimnasio.lider }}
                         </p>
+
                         <div class="acciones-pokemon">
 
-    <a href="{% url 'editar_gimnasio' gimnasio.id %}"
-       class="boton-editar">
-        ✏️ Editar
-    </a>
+                            {% if user.is_superuser or user.perfil.rol == "ADMIN" or user.perfil.rol == "EDITOR" %}
+                                <a
+                                    href="{% url 'editar_gimnasio' gimnasio.id %}"
+                                    class="boton-editar"
+                                >
+                                    ✏️ Editar
+                                </a>
+                            {% endif %}
 
-    <a href="{% url 'eliminar_gimnasio' gimnasio.id %}"
-       class="boton-eliminar">
-        🗑️ Eliminar
-    </a>
+                            {% if user.is_superuser or user.perfil.rol == "ADMIN" %}
+                                <a
+                                    href="{% url 'eliminar_gimnasio' gimnasio.id %}"
+                                    class="boton-eliminar"
+                                >
+                                    🗑️ Eliminar
+                                </a>
+                            {% endif %}
 
-</div>
+                        </div>
 
                     </article>
 
                 {% empty %}
-
                     <p>Aún no hay gimnasios registrados.</p>
-
                 {% endfor %}
 
             </div>
@@ -306,28 +338,33 @@
                             <strong>Medallas:</strong>
                             {{ entrenador.medallas }}
                         </p>
-                        
-<div class="acciones-pokemon">
 
-    <a href="{% url 'editar_entrenador' entrenador.id %}"
-       class="boton-editar">
-        ✏️ Editar
-    </a>
+                        <div class="acciones-pokemon">
 
-    <a href="{% url 'eliminar_entrenador' entrenador.id %}"
-       class="boton-eliminar">
-        🗑️ Eliminar
-    </a>
+                            {% if user.is_superuser or user.perfil.rol == "ADMIN" or user.perfil.rol == "EDITOR" %}
+                                <a
+                                    href="{% url 'editar_entrenador' entrenador.id %}"
+                                    class="boton-editar"
+                                >
+                                    ✏️ Editar
+                                </a>
+                            {% endif %}
 
-</div>
+                            {% if user.is_superuser or user.perfil.rol == "ADMIN" %}
+                                <a
+                                    href="{% url 'eliminar_entrenador' entrenador.id %}"
+                                    class="boton-eliminar"
+                                >
+                                    🗑️ Eliminar
+                                </a>
+                            {% endif %}
 
+                        </div>
 
                     </article>
 
                 {% empty %}
-
                     <p>Aún no hay entrenadores registrados.</p>
-
                 {% endfor %}
 
             </div>
@@ -353,8 +390,7 @@
                 .toLowerCase()
                 .trim();
 
-            const elementoBuscado = filtro.value
-                .toLowerCase();
+            const elementoBuscado = filtro.value.toLowerCase();
 
             let encontrados = 0;
 

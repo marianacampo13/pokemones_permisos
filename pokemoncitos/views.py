@@ -2,6 +2,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Pokemon, Gimnasio, Entrenador
 from .forms import PokemonForm,GimnasioForm,EntrenadorForm
+from .decoradores import rol_requerido
 
 
 
@@ -91,7 +92,11 @@ def inicio(request):
 
 
 
+
+
 # REGISTRAR UN POKEMON
+
+@rol_requerido("ADMIN", "EDITOR")
 def crear_pokemon(request):
     if request.method == "POST":
         formulario = PokemonForm(request.POST)
@@ -110,6 +115,7 @@ def crear_pokemon(request):
 
 
 # EDITAR UN POKEMON
+@rol_requerido("ADMIN", "EDITOR")
 def editar_pokemon(request, id):
     pokemon = get_object_or_404(Pokemon, id=id)
 
@@ -130,6 +136,7 @@ def editar_pokemon(request, id):
 
 
 # ELIMINAR UN POKEMON
+@rol_requerido("ADMIN")
 def eliminar_pokemon(request, id):
     pokemon = get_object_or_404(Pokemon, id=id)
 
@@ -145,6 +152,7 @@ def eliminar_pokemon(request, id):
 
 
 # REGISTRAR UN GIMNASIO
+@rol_requerido("ADMIN", "EDITOR")
 def crear_gimnasio(request):
     if request.method == "POST":
         formulario = GimnasioForm(request.POST)
@@ -163,6 +171,7 @@ def crear_gimnasio(request):
 
 
 # EDITAR UN GIMNASIO
+@rol_requerido("ADMIN", "EDITOR")
 def editar_gimnasio(request, id):
     gimnasio = get_object_or_404(Gimnasio, id=id)
 
@@ -186,6 +195,7 @@ def editar_gimnasio(request, id):
 
 
 # ELIMINAR UN GIMNASIO
+@rol_requerido("ADMIN")
 def eliminar_gimnasio(request, id):
     gimnasio = get_object_or_404(Gimnasio, id=id)
 
@@ -201,6 +211,7 @@ def eliminar_gimnasio(request, id):
 
 
 # REGISTRAR UN ENTRENADOR
+@rol_requerido("ADMIN", "EDITOR")
 def crear_entrenador(request):
     if request.method == "POST":
         formulario = EntrenadorForm(request.POST)
@@ -219,6 +230,7 @@ def crear_entrenador(request):
 
 
 # EDITAR UN ENTRENADOR
+@rol_requerido("ADMIN", "EDITOR")
 def editar_entrenador(request, id):
     entrenador = get_object_or_404(Entrenador, id=id)
 
@@ -242,6 +254,7 @@ def editar_entrenador(request, id):
 
 
 # ELIMINAR UN ENTRENADOR
+@rol_requerido("ADMIN")
 def eliminar_entrenador(request, id):
     entrenador = get_object_or_404(Entrenador, id=id)
 
